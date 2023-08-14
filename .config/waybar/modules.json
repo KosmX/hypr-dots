@@ -1,0 +1,195 @@
+{
+
+    "height": 52, // Waybar height (to be removed for auto height)
+
+    //***************************
+    //*  Modules configuration  *
+    //***************************
+
+    "custom/junkyard": {
+        "format": " 󰕮 ",
+        "on-click": "hyprctl dispatch togglespecialworkspace"
+    },
+
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "tooltip-format": "{title}",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1",
+        "on-click": "activate"
+    },
+
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "tooltip": true,
+        "tooltip-format": "{title}",
+        "active-first": false,
+        "icon-size": 16,
+        "on-click": "activate",
+        "on-click-middle": "close",
+        "icon-theme": "BeautyLine",
+    },
+
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 48,
+        "rewrite": {
+            "(.*) — Mozilla Firefox": "󰈹 $1",
+            "(.*) — Konsole": "󰞷 [$1]",
+            "(.*) - Visual Studio Code": "󰨞 [$1]",
+        },
+        "separate-outputs": true
+    },
+
+    "hyprland/language": {
+        "format": "{}",
+	    "max-length": 12,
+	    "tooltip": false
+    },
+
+    "keyboard-state": {
+        "numlock": true,
+        "capslock": true,
+        "scrolllock": false,
+        "format": {
+            "capslock": " 󰪛 ",
+            "numlock": " 󰎣 ",
+            "scrolllock": " 󰜰 "
+        }
+    },
+
+    "custom/pacman": {
+        "format": "{} ",
+        "interval": 3600,                     			// every hour
+        "exec": "(checkupdates;pacman -Qm | aur vercmp) | wc -l",	// # of updates
+        "exec-if": "exit 0",                  			// always run; consider advanced run conditions
+        "on-click": "konsole sh -c 'yay; echo Done - Press enter to exit; read'; pkill -SIGRTMIN+8 waybar", // update system
+        "signal": 8,
+        "tooltip": false,
+    },
+
+    "custom/mail": {
+        "format": "{} ",
+        "exec": "$HOME/.config/waybar/scripts/checkgmail.py",
+        "interval": 120,
+        "on-click": "google-chrome-stable https://mail.google.com/mail/u/0/#inbox ; pkill -SIGRTMIN+9 waybar",
+        "signal": 9,
+        "tooltip": false,
+    },
+
+    "clock": {
+        // "timezone": "America/New_York",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format": "{:%a, %d %b, %I:%M %p}"
+    },
+
+    "custom/weather": {
+        "format": "{}",
+        "tooltip": true,
+        "interval": 1800,
+        "exec": "$HOME/.config/waybar/scripts/wttr.py",
+        "return-type": "json"
+    },
+
+    "custom/battery": {
+        "format": {},
+        "tooltip": false,
+        "interval": 15,
+        "exec": "$HOME/.config/waybar/scripts/check_ups.sh"
+    },
+
+
+    "custom/headset": {
+        "format": "󰥉 {} 󰋎",
+        "tooltip": false,
+        "interval": 15,
+        "on-click": "pavucontrol",
+        "on-click-right": "headsetcontrol -l 0",
+        "exec": "$HOME/.config/waybar/scripts/check_headset.sh",
+        "return-type": "json",
+    },
+
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "reverse-scrolling": 1,
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": "婢 {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "|",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["奄", "奔", "墳"]
+        },
+        "on-click": "pavucontrol",
+        "min-length": 13,
+    },
+
+
+    "memory": {
+        "interval": 3,
+        "format": "󰍛 {}%",
+        "max-length": 10
+    },
+
+    "temperature": {
+        // "thermal-zone": 2,
+        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        "critical-threshold": 80,
+        // "format-critical": "{temperatureC}°C {icon}",
+        "format": "{temperatureC}°C {icon}",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip": false,
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 0
+    },
+
+    "custom/notification": {
+        "tooltip": false,
+        "format": " {icon} ",
+        "format-icons": {
+          "notification": "<span foreground='red'><sup></sup></span>",
+          "none": "",
+          "dnd-notification": "<span foreground='red'><sup></sup></span>",
+          "dnd-none": "",
+          "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+          "inhibited-none": "",
+          "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+          "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        //"on-click": "sh -c 'sleep 0.1s; swaync-client -t -sw; sleep 0.1s'",
+        "on-click-release": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    },
+
+    "custom/brightness": {
+        // I don't even want to know why this works.
+        // Change it to the following for your custom icons,
+        // current format is a hack for Material Symbols to display normally:
+        // "format": "{icon} {percentage}%",
+        "format": "<span rise='-2pt' size='12pt'>{icon}</span> <span rise='1pt' size='10pt'>{percentage}%</span>",
+        "format-icons": [
+            "󰃜", "󰃝", "󰃞", "󰃟", "󰃠"
+        ],
+        "exec": "~/.config/waybar/scripts/waybar-ddc-module.sh",
+        "return-type": "json",
+        "on-scroll-up": "echo '+' > /tmp/waybar-ddc-module-rx",
+        "on-scroll-down": "echo '-' > /tmp/waybar-ddc-module-rx",
+        "on-click": "echo 'min' > /tmp/waybar-ddc-module-rx",
+        "on-click-right": "echo 'max' > /tmp/waybar-ddc-module-rx",
+        "tooltip": false,
+    },
+}

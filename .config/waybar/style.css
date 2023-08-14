@@ -1,0 +1,208 @@
+* {
+    border: none;
+    border-radius: 0;
+    /* `otf-font-awesome` is required to be installed for icons */
+    font-family: Liberation Mono,bootstrap-icons;
+    padding: 2px 6px 0 6px;
+    min-height: 22px;
+}
+
+window#waybar {
+    background: transparent;
+    border-top: 3px solid rgba(97, 218, 255, 0.8);
+}
+
+window#waybar.hidden {
+    border-top: 3px solid rgba(255, 102, 97, 0.8);
+    opacity: 0.8;
+}
+
+/* Border config */
+
+#custom-junkyard, #workspaces, #taskbar, #language, #keyboard-state, #clock, #custom-weather, #custom-headset, #pulseaudio, #memory, #custom-brightness, #custom-battery, #tray, #custom-notification {
+    border-bottom: 2px solid rgba(97, 218, 255, 0.89);
+    /* GTK: gradient is an image, why? border-bottom: linear-gradient(132deg, rgba(97,218,255,0.89) 0%, rgba(0,255,216,0.89) 100%);*/
+    background: rgba(28, 31, 42, 0.712);
+    color: #FCFCFC;
+}
+
+#memory, #custom-brightness, #custom-battery {
+    border-bottom: 2px solid rgba(97, 255, 242, 0.89);
+}
+
+#custom-junkyard {
+    padding: 2px 6px 0 10px;
+    border-radius: 0px 0px 0px 6px;
+    transition: none;
+}
+
+#custom-junkyard:hover {
+    border-radius: 0px 0px 6px 6px;
+    background-color: rgba(49, 54, 71, 0.712);
+    transition: none;
+}
+
+#workspaces {
+    margin-right: 8px;
+    border-radius: 0px 0px 6px 0px;
+    transition: none;
+}
+
+#workspaces button {
+    transition: none;
+    background: transparent;
+    padding: 10px 5px 5px 5px;
+    font-size: 18px;
+}
+
+
+/* https://github.com/Alexays/Waybar/wiki/FAQ#the-workspace-buttons-have-a-strange-hover-effect */
+#workspaces button:hover, #taskbar button:hover {
+    background-color: rgba(49, 54, 71, 0.712);
+    border-bottom: 1px solid rgba(97, 218, 255, 0.89);
+}
+
+#workspaces button.active, #taskbar button.active {
+    border-bottom: 2px solid rgba(97, 218, 255, 0.89);
+}
+
+#taskbar {
+    border-radius: 0 0 6px 6px;
+    transition: none;
+    padding: 0px;
+    margin-right: 8px;
+}
+
+#window {
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-bottom: 0;
+    margin-top: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background: rgba(100, 185, 255, 0.411);
+    border-radius: 12px;
+}
+
+window#waybar.empty #window {
+    background: rgba(255, 255, 255, 0);
+}
+
+window#waybar.firefox #window {
+    background: rgba(255, 185, 104, 0.562);
+}
+
+#language {
+    margin-left: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 10px;
+    border-radius: 0 0px 0px 8px;
+}
+
+#keyboard-state {
+    margin-right: 8px;
+    padding-right: 4px;
+    padding-left: 4px;
+    border-radius: 0px 0 10px 0px;
+}
+
+#keyboard-state label {
+    padding-right: 7px;
+    padding-left: 4px;
+}
+
+#keyboard-state label.locked {
+    background-color: rgba(39, 43, 56, 0.712);
+    border-bottom: 2px solid rgba(97, 218, 255, 0.89);
+}
+
+#clock {
+    margin-left: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    border-radius: 0px 0px 0px 8px;
+}
+
+#custom-weather {
+    padding-right: 16px;
+    border-radius: 0px 0px 8px 0px;
+    margin-right: 8px;
+}
+
+#custom-headset {
+    margin-left: 8px;
+    border-radius: 0 0 0 8px;
+}
+
+#custom-headset.offline{
+    border-bottom: 2px solid rgba(39, 73, 85, 0.911);
+}
+
+#custom-headset.charging{
+    border-bottom: 2px solid rgba(97, 255, 123, 0.89);
+}
+
+#pulseaudio {
+    margin-right: 8px;
+    padding-left: 0px;
+    padding-right: 16px;
+    border-radius: 10px;
+    border-radius: 0 0 8px 0;
+}
+
+#pulseaudio.muted {
+    border-bottom: 2px solid rgba(39, 73, 85, 0.911);
+}
+
+#memory {
+    border-radius: 0 0 0 8px;
+}
+
+#custom-battery {
+    border-radius: 0 0 8px 0;
+    margin-right: 8px;
+}
+
+
+#tray {
+    margin-left: 8px;
+    margin-right: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 0 0 8px 8px;
+    transition: none;
+}
+
+#custom-notification {
+    padding-right: 12px;
+    border-radius: 0 0 8px 8px;
+}
+
+tooltip * {
+    padding: 0;
+    margin: 0;
+}
+
+tooltip {
+    border: 1.5px solid rgba(97, 218, 255, 0.89);
+    background: rgba(28, 31, 42, 0.712);
+    border-radius: 12px;
+}
+
+tooltip label {
+    margin: 8px;
+    padding: 8px;
+    padding-bottom: 0;
+    border-radius: 6px;
+    color: #FCFCFC;
+    background: transparent;
+}
+
+@keyframes blink {
+    to {
+        background-color: #ffffff;
+        color: #000000;
+    }
+}

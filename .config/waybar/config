@@ -1,0 +1,41 @@
+[{
+
+	"output": ["DP-1"],
+
+
+    "layer": "top", // Waybar at top layer
+    "position": "top", // Waybar position (top|bottom|left|right)
+    //"height": 22, // Waybar height (to be removed for auto height)
+    // "margin": "0 20 0 20", // 0 0 0 0
+    // "width": 1280, // Waybar width
+    // Choose the order of the modules
+
+	"include": [
+		"~/.config/waybar/modules.json",
+	],
+    
+    "modules-left": ["custom/junkyard", "hyprland/workspaces", "wlr/taskbar", "hyprland/language", "keyboard-state"],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["clock", "custom/weather", "custom/headset", "pulseaudio", "memory", "custom/brightness", "custom/battery", "tray", "custom/notification"],
+},
+{
+
+	"output": ["HDMI-A-1"],
+
+
+    "layer": "top", // Waybar at top layer
+    "position": "top", // Waybar position (top|bottom|left|right)
+    //"height": 22, // Waybar height (to be removed for auto height)
+    // "margin": "0 20 0 20", // 0 0 0 0
+    // "width": 1280, // Waybar width
+    // Choose the order of the modules
+
+	"include": [
+		"~/.config/waybar/modules.json",
+	],
+    
+    "modules-left": ["custom/junkyard", "hyprland/workspaces",],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["wlr/taskbar"],
+}
+]

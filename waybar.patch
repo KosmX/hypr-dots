@@ -1,0 +1,216 @@
+From 718db716384076f2d941004f42c82cbc05588277 Mon Sep 17 00:00:00 2001
+From: KosmX <kosmx.mc@gmail.com>
+Date: Wed, 16 Aug 2023 17:11:44 +0200
+Subject: [PATCH 1/4] Refactor enable click condition This shouldn't change
+ behaviour.
+
+---
+ src/AModule.cpp | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/src/AModule.cpp b/src/AModule.cpp
+index 2626cd8..28feb4e 100644
+--- a/src/AModule.cpp
++++ b/src/AModule.cpp
+@@ -27,20 +27,16 @@ AModule::AModule(const Json::Value& config, const std::string& name, const std::
+   }
+ 
+   // configure events' user commands
+-  if (enable_click) {
++  // hasUserEvent is true if any element from eventMap_ is satisfying the condition in the lambda function
++  bool hasUserEvent =
++      std::find_if(eventMap_.cbegin(), eventMap_.cend(), [&config](const auto& eventEntry) {
++        //True if there is any non-release type event
++        return eventEntry.first.second != GdkEventType::GDK_BUTTON_RELEASE && config[eventEntry.second].isString();
++      }) != eventMap_.cend();
++
++  if (enable_click || hasUserEvent) {
+     event_box_.add_events(Gdk::BUTTON_PRESS_MASK);
+     event_box_.signal_button_press_event().connect(sigc::mem_fun(*this, &AModule::handleToggle));
+-  } else {
+-    std::map<std::pair<uint, GdkEventType>, std::string>::const_iterator it{eventMap_.cbegin()};
+-    while (it != eventMap_.cend()) {
+-      if (config_[it->second].isString()) {
+-        event_box_.add_events(Gdk::BUTTON_PRESS_MASK);
+-        event_box_.signal_button_press_event().connect(
+-            sigc::mem_fun(*this, &AModule::handleToggle));
+-        break;
+-      }
+-      ++it;
+-    }
+   }
+   if (config_["on-scroll-up"].isString() || config_["on-scroll-down"].isString() || enable_scroll) {
+     event_box_.add_events(Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
+-- 
+2.41.0
+
+
+From 1d8331d0c585ad9d855b77dcfe2e249cab92359c Mon Sep 17 00:00:00 2001
+From: KosmX <kosmx.mc@gmail.com>
+Date: Wed, 16 Aug 2023 17:12:32 +0200
+Subject: [PATCH 2/4] Add release events to event map
+
+---
+ include/AModule.hpp | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/AModule.hpp b/include/AModule.hpp
+index 9b16076..006546e 100644
+--- a/include/AModule.hpp
++++ b/include/AModule.hpp
+@@ -44,18 +44,23 @@ class AModule : public IModule {
+   std::map<std::string, std::string> eventActionMap_;
+   static const inline std::map<std::pair<uint, GdkEventType>, std::string> eventMap_{
+       {std::make_pair(1, GdkEventType::GDK_BUTTON_PRESS), "on-click"},
++      {std::make_pair(1, GdkEventType::GDK_BUTTON_RELEASE), "on-click-release"},
+       {std::make_pair(1, GdkEventType::GDK_2BUTTON_PRESS), "on-double-click"},
+       {std::make_pair(1, GdkEventType::GDK_3BUTTON_PRESS), "on-triple-click"},
+       {std::make_pair(2, GdkEventType::GDK_BUTTON_PRESS), "on-click-middle"},
++      {std::make_pair(2, GdkEventType::GDK_BUTTON_RELEASE), "on-click-middle-release"},
+       {std::make_pair(2, GdkEventType::GDK_2BUTTON_PRESS), "on-double-click-middle"},
+       {std::make_pair(2, GdkEventType::GDK_3BUTTON_PRESS), "on-triple-click-middle"},
+       {std::make_pair(3, GdkEventType::GDK_BUTTON_PRESS), "on-click-right"},
++      {std::make_pair(3, GdkEventType::GDK_BUTTON_RELEASE), "on-click-right-release"},
+       {std::make_pair(3, GdkEventType::GDK_2BUTTON_PRESS), "on-double-click-right"},
+       {std::make_pair(3, GdkEventType::GDK_3BUTTON_PRESS), "on-triple-click-right"},
+       {std::make_pair(8, GdkEventType::GDK_BUTTON_PRESS), "on-click-backward"},
++      {std::make_pair(8, GdkEventType::GDK_BUTTON_RELEASE), "on-click-backward-release"},
+       {std::make_pair(8, GdkEventType::GDK_2BUTTON_PRESS), "on-double-click-backward"},
+       {std::make_pair(8, GdkEventType::GDK_3BUTTON_PRESS), "on-triple-click-backward"},
+       {std::make_pair(9, GdkEventType::GDK_BUTTON_PRESS), "on-click-forward"},
++      {std::make_pair(9, GdkEventType::GDK_BUTTON_RELEASE), "on-click-forward-release"},
+       {std::make_pair(9, GdkEventType::GDK_2BUTTON_PRESS), "on-double-click-forward"},
+       {std::make_pair(9, GdkEventType::GDK_3BUTTON_PRESS), "on-triple-click-forward"}};
+ };
+-- 
+2.41.0
+
+
+From 2ff347f9a8786f8f0f8c1f0d8e93249d3b288e26 Mon Sep 17 00:00:00 2001
+From: KosmX <kosmx.mc@gmail.com>
+Date: Wed, 16 Aug 2023 17:14:49 +0200
+Subject: [PATCH 3/4] Add handleRelease method to release events
+
+This commit shouldn't change the handleToggle behaviour,
+it shouldn't break anything.
+---
+ include/AModule.hpp |  3 +++
+ src/AModule.cpp     | 18 ++++++++++++++++++
+ 2 files changed, 21 insertions(+)
+
+diff --git a/include/AModule.hpp b/include/AModule.hpp
+index 006546e..479755b 100644
+--- a/include/AModule.hpp
++++ b/include/AModule.hpp
+@@ -36,8 +36,11 @@ class AModule : public IModule {
+ 
+   virtual bool handleToggle(GdkEventButton *const &ev);
+   virtual bool handleScroll(GdkEventScroll *);
++  virtual bool handleRelease(GdkEventButton *const &ev);
+ 
+  private:
++  bool handleUserEvent(GdkEventButton *const &ev);
++
+   std::vector<int> pid_;
+   gdouble distance_scrolled_y_;
+   gdouble distance_scrolled_x_;
+diff --git a/src/AModule.cpp b/src/AModule.cpp
+index 28feb4e..59078b3 100644
+--- a/src/AModule.cpp
++++ b/src/AModule.cpp
+@@ -38,6 +38,16 @@ AModule::AModule(const Json::Value& config, const std::string& name, const std::
+     event_box_.add_events(Gdk::BUTTON_PRESS_MASK);
+     event_box_.signal_button_press_event().connect(sigc::mem_fun(*this, &AModule::handleToggle));
+   }
++
++  bool hasReleaseEvent =
++      std::find_if(eventMap_.cbegin(), eventMap_.cend(), [&config](const auto& eventEntry) {
++        //True if there is any non-release type event
++        return eventEntry.first.second == GdkEventType::GDK_BUTTON_RELEASE && config[eventEntry.second].isString();
++      }) != eventMap_.cend();
++  if (hasReleaseEvent) {
++    event_box_.add_events(Gdk::BUTTON_RELEASE_MASK);
++    event_box_.signal_button_release_event().connect(sigc::mem_fun(*this, &AModule::handleRelease));
++  }
+   if (config_["on-scroll-up"].isString() || config_["on-scroll-down"].isString() || enable_scroll) {
+     event_box_.add_events(Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
+     event_box_.signal_scroll_event().connect(sigc::mem_fun(*this, &AModule::handleScroll));
+@@ -69,6 +79,14 @@ auto AModule::doAction(const std::string& name) -> void {
+ }
+ 
+ bool AModule::handleToggle(GdkEventButton* const& e) {
++  return handleUserEvent(e);
++}
++
++bool AModule::handleRelease(GdkEventButton* const& e) {
++  return handleUserEvent(e);
++}
++
++bool AModule::handleUserEvent(GdkEventButton* const& e) {
+   std::string format{};
+   const std::map<std::pair<uint, GdkEventType>, std::string>::const_iterator& rec{
+       eventMap_.find(std::pair(e->button, e->type))};
+-- 
+2.41.0
+
+
+From 392e863e6daa70908cdb55889786ebae364bf315 Mon Sep 17 00:00:00 2001
+From: KosmX <kosmx.mc@gmail.com>
+Date: Wed, 16 Aug 2023 17:33:36 +0200
+Subject: [PATCH 4/4] Apply formatting
+
+---
+ src/AModule.cpp | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/src/AModule.cpp b/src/AModule.cpp
+index 59078b3..398fa51 100644
+--- a/src/AModule.cpp
++++ b/src/AModule.cpp
+@@ -27,11 +27,12 @@ AModule::AModule(const Json::Value& config, const std::string& name, const std::
+   }
+ 
+   // configure events' user commands
+-  // hasUserEvent is true if any element from eventMap_ is satisfying the condition in the lambda function
++  // hasUserEvent is true if any element from eventMap_ is satisfying the condition in the lambda
+   bool hasUserEvent =
+       std::find_if(eventMap_.cbegin(), eventMap_.cend(), [&config](const auto& eventEntry) {
+-        //True if there is any non-release type event
+-        return eventEntry.first.second != GdkEventType::GDK_BUTTON_RELEASE && config[eventEntry.second].isString();
++        // True if there is any non-release type event
++        return eventEntry.first.second != GdkEventType::GDK_BUTTON_RELEASE &&
++               config[eventEntry.second].isString();
+       }) != eventMap_.cend();
+ 
+   if (enable_click || hasUserEvent) {
+@@ -41,8 +42,9 @@ AModule::AModule(const Json::Value& config, const std::string& name, const std::
+ 
+   bool hasReleaseEvent =
+       std::find_if(eventMap_.cbegin(), eventMap_.cend(), [&config](const auto& eventEntry) {
+-        //True if there is any non-release type event
+-        return eventEntry.first.second == GdkEventType::GDK_BUTTON_RELEASE && config[eventEntry.second].isString();
++        // True if there is any non-release type event
++        return eventEntry.first.second == GdkEventType::GDK_BUTTON_RELEASE &&
++               config[eventEntry.second].isString();
+       }) != eventMap_.cend();
+   if (hasReleaseEvent) {
+     event_box_.add_events(Gdk::BUTTON_RELEASE_MASK);
+@@ -78,13 +80,9 @@ auto AModule::doAction(const std::string& name) -> void {
+   }
+ }
+ 
+-bool AModule::handleToggle(GdkEventButton* const& e) {
+-  return handleUserEvent(e);
+-}
++bool AModule::handleToggle(GdkEventButton* const& e) { return handleUserEvent(e); }
+ 
+-bool AModule::handleRelease(GdkEventButton* const& e) {
+-  return handleUserEvent(e);
+-}
++bool AModule::handleRelease(GdkEventButton* const& e) { return handleUserEvent(e); }
+ 
+ bool AModule::handleUserEvent(GdkEventButton* const& e) {
+   std::string format{};
+-- 
+2.41.0
+

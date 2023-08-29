@@ -88,6 +88,10 @@ files:
         - `wttr.py` Weather info helper
     - `style.css` Some status-bar functionality is only done by css
 
+> Because of an issue in Waybar, I'm using a patched version: [Waybar/2414](https://github.com/Alexays/Waybar/pull/2414)  
+If the PR isn't merged (yet), you'll need to apply the [patch](/waybar.patch) manually
+
+
 ### wpaperd (wallpaper)
 Simply show a random wallpaper every for every display
 images are from `.config/hypr/wallpapers`

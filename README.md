@@ -102,6 +102,8 @@ I used a template to configure it
 Generates a random entry into wallpaper directory. (There will be a small chance to be shown every time)
 > To enable, `systemctl --user enable pacwall-watch-packages.path`
 
+### Swaylock
+Swaylock can be configured by editing the `~/.config/swaylock.sh` script
 
 </details>
 

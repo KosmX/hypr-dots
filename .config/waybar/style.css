@@ -19,14 +19,14 @@ window#waybar.hidden {
 
 /* Border config */
 
-#custom-junkyard, #workspaces, #taskbar, #language, #keyboard-state, #clock, #custom-weather, #custom-headset, #pulseaudio, #memory, #custom-brightness, #custom-battery, #tray, #custom-notification {
+#custom-junkyard, #workspaces, #taskbar, #language, #keyboard-state, #clock, #custom-weather, #custom-headset, #pulseaudio, #memory, #custom-brightness, #custom-battery, #idle_inhibitor, #tray, #custom-notification {
     border-bottom: 2px solid rgba(97, 218, 255, 0.89);
     /* GTK: gradient is an image, why? border-bottom: linear-gradient(132deg, rgba(97,218,255,0.89) 0%, rgba(0,255,216,0.89) 100%);*/
     background: rgba(28, 31, 42, 0.712);
     color: #FCFCFC;
 }
 
-#memory, #custom-brightness, #custom-battery {
+#memory, #custom-brightness, #custom-battery, #idle_inhibitor {
     border-bottom: 2px solid rgba(97, 255, 242, 0.89);
 }
 
@@ -158,6 +158,15 @@ window#waybar.firefox #window {
 
 #memory {
     border-radius: 0 0 0 8px;
+}
+
+#idle_inhibitor {
+    padding-right: 12px
+}
+
+#idle_inhibitor.activated {
+    border-bottom: 3px solid rgba(255, 195, 12, 0.9);
+    /*background-color: rgba(49, 54, 71, 0.712);*/
 }
 
 #custom-battery {

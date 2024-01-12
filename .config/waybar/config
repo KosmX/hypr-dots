@@ -16,11 +16,11 @@
     
     "modules-left": ["custom/junkyard", "hyprland/workspaces", "wlr/taskbar", "hyprland/language", "keyboard-state"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["clock", "custom/weather", "custom/headset", "pulseaudio", "memory", "custom/brightness", "custom/battery", "tray", "custom/notification"],
+    "modules-right": ["clock", "custom/weather", "custom/headset", "pulseaudio", "memory", "custom/brightness", "idle_inhibitor", "custom/battery", "tray", "custom/notification"],
 },
 {
 
-	"output": ["HDMI-A-1"],
+	"output": ["DP-2"],
 
 
     "layer": "top", // Waybar at top layer

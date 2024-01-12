@@ -192,4 +192,12 @@
         "on-click-right": "echo 'max' > /tmp/waybar-ddc-module-rx",
         "tooltip": false,
     },
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "󰒳",
+            "deactivated": "󰒲"
+        }
+    }
 }

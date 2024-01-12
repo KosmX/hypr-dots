@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 receive_pipe="/tmp/waybar-ddc-module-rx"
-step=25
+step=10
 
 ddcutil_fast() {
     # adjust the bus number and the multiplier for your display
     # multiplier should be chosen so that it both works reliably and fast enough
     ddcutil --noverify --bus 2 --enable-capabilities-cache --sleep-multiplier .03 "$@" 2>/dev/null
+    ddcutil --noverify --bus 3 --enable-capabilities-cache --sleep-multiplier .03 "$@" 2>/dev/null 1>/dev/null
 }
 
 ddcutil_slow() {
@@ -40,7 +41,7 @@ while true; do
             ddcutil_fast setvcp 10 100 
             ;;
         min)
-            ddcutil_fast setvcp 10 50
+            ddcutil_fast setvcp 10 40
             ;;
     esac
     print_brightness ddcutil_fast
